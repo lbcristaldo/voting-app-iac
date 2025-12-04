@@ -4,3 +4,31 @@ bin/
 obj/
 .vs/
 node_modules/
+
+# Terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+*.tfvars
+.terraform.lock.hcl
+crash.log
+
+# Helm
+**/charts/*.tgz
+requirements.lock
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+*.swp
+
+# Secrets
+secrets/
+*.key
+*.pem
+
+# Local testing
+*.log

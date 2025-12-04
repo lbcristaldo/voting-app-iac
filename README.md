@@ -1,65 +1,84 @@
-# Example Voting App
+# Voting App - Infrastructure as Code
 
-A simple distributed application running across multiple Docker containers.
+Production-ready infrastructure automation for the Docker Voting App using Terraform and Helm.
 
-## Getting started
+ Application Architecture
+The voting app consists of 5 microservices:
 
-Download [Docker Desktop](https://www.docker.com/products/docker-desktop) for Mac or Windows. [Docker Compose](https://docs.docker.com/compose) will be automatically installed. On Linux, make sure you have the latest version of [Compose](https://docs.docker.com/compose/install/).
+- **Vote** (Python Flask): Frontend where users vote
+- **Redis**: In-memory queue for votes
+- **Worker** (.NET): Processes votes from Redis to PostgreSQL
+- **DB** (PostgreSQL): Persistent storage for votes
+- **Result** (Node.js): Real-time results dashboard
 
-This solution uses Python, Node.js, .NET, with Redis for messaging and Postgres for storage.
-
-Run in this directory to build and run the app:
-
-```shell
-docker compose up
 ```
+┌─────────┐      ┌───────┐      ┌────────┐      ┌──────┐      ┌────────┐
+│  Vote   │─────▶│ Redis │─────▶│ Worker │─────▶│  DB  │◀─────│ Result │
+│ (Flask) │      │       │      │ (.NET) │      │(Postgres)│   │(Node.js)│
+└─────────┘      └───────┘      └────────┘      └──────┘      └────────┘
 
-The `vote` app will be running at [http://localhost:8080](http://localhost:8080), and the `results` will be at [http://localhost:8081](http://localhost:8081).
+## Infrastructure Stack
+    Terraform: Provisions Kubernetes cluster and resources
+    Helm: Deploys and manages application services
+    GitHub Actions: CI/CD automation
 
-Alternately, if you want to run it on a [Docker Swarm](https://docs.docker.com/engine/swarm/), first make sure you have a swarm. If you don't, run:
+## Project Structure
 
-```shell
-docker swarm init
-```
+voting-app-infrastructure/
+├── terraform/              # Infrastructure provisioning
+│   ├── environments/
+│   │   ├── dev/           # Development environment
+│   │   └── prod/          # Production environment
+│   └── modules/
+│       ├── kubernetes-cluster/
+│       ├── networking/
+│       └── helm-releases/
+├── helm/                   # Application deployment
+│   ├── vote/              # Vote service chart
+│   ├── result/            # Result service chart
+│   ├── worker/            # Worker service chart
+│   ├── redis/             # Redis chart
+│   └── db/                # PostgreSQL chart
+├── .github/workflows/      # CI/CD pipelines
+└── docs/                   # Documentation
 
-Once you have your swarm, in this directory run:
+## Quick Start
+ Prerequisites:
 
-```shell
-docker stack deploy --compose-file docker-stack.yml vote
-```
+    Terraform >= 1.5
+    Helm >= 3.0
+    kubectl configured
+    Cloud provider account (GCP/AWS) or Minikube
 
-## Run the app in Kubernetes
+## Deploy to Development
+cd terraform/environments/dev
+terraform init
+terraform plan
+terraform apply
 
-The folder k8s-specifications contains the YAML specifications of the Voting App's services.
+cd ../../../helm
+helm install vote ./vote -f vote/values-dev.yaml
+helm install redis ./redis -f redis/values-dev.yaml
+helm install worker ./worker -f worker/values-dev.yaml
+helm install db ./db -f db/values-dev.yaml
+helm install result ./result -f result/values-dev.yaml
 
-Run the following command to create the deployments and services. Note it will create these resources in your current namespace (`default` if you haven't changed it.)
+## Features
+    - Multi-environment support (dev/prod)
+    - Terraform modules for reusability
+    - Helm charts for each microservice
+    - Automated CI/CD with GitHub Actions
+    - Monitoring with Prometheus/Grafana
+    - Ingress with TLS
+    - Auto-scaling policies
 
-```shell
-kubectl create -f k8s-specifications/
-```
+### Original Application
+Based on: https://github.com/dockersamples/example-voting-app
 
-The `vote` web app is then available on port 31000 on each host of the cluster, the `result` web app is available on port 31001.
+Author: Luciana Cristaldo - 2025
 
-To remove them, run:
-
-```shell
-kubectl delete -f k8s-specifications/
-```
-
-## Architecture
-
-![Architecture diagram](architecture.excalidraw.png)
-
-* A front-end web app in [Python](/vote) which lets you vote between two options
-* A [Redis](https://hub.docker.com/_/redis/) which collects new votes
-* A [.NET](/worker/) worker which consumes votes and stores them in…
-* A [Postgres](https://hub.docker.com/_/postgres/) database backed by a Docker volume
-* A [Node.js](/result) web app which shows the results of the voting in real time
-
-## Notes
-
-The voting application only accepts one vote per client browser. It does not register additional votes if a vote has already been submitted from a client.
-
-This isn't an example of a properly architected perfectly designed distributed app... it's just a simple
-example of the various types of pieces and languages you might see (queues, persistent data, etc), and how to
-deal with them in Docker at a basic level.
+### Infrastructure modernization and automation project demonstrating:
+- Infrastructure as Code with Terraform
+- GitOps with Helm
+- Kubernetes orchestration
+- Multi-service deployment automation
