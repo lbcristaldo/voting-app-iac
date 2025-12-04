@@ -1,0 +1,15 @@
+# Development Environment Variables
+# Copy this file to terraform.tfvars and adjust as needed
+
+# Kubernetes Configuration
+kubeconfig_path = "~/.kube/config"
+kube_context    = "minikube"
+
+# Application Configuration
+namespace = "voting-app-dev"
+environment = "dev"
+
+# Service Replicas
+vote_replicas   = 1
+result_replicas = 1
+worker_replicas = 1
