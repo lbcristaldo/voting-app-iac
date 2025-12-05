@@ -1,0 +1,15 @@
+apiVersion: v2
+name: redis
+description: Redis in-memory data store for voting app
+type: application
+version: 1.0.0
+appVersion: "7.0"
+
+keywords:
+  - redis
+  - cache
+  - queue
+
+maintainers:
+  - name: Luciana Cristaldo
+    email: lucianabcristaldo@gmail.com

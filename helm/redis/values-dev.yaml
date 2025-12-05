@@ -1,0 +1,16 @@
+# Development environment overrides
+
+replicaCount: 1
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 50m
+    memory: 64Mi
+
+# Dev: no persistence needed (faster iteration)
+redis:
+  persistence:
+    enabled: false
