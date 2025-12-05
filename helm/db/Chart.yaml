@@ -1,0 +1,15 @@
+apiVersion: v2
+name: db
+description: PostgreSQL database for storing votes
+type: application
+version: 1.0.0
+appVersion: "15"
+
+keywords:
+  - postgresql
+  - database
+  - sql
+
+maintainers:
+  - name: Luciana Cristaldo
+    email: lucianabcristaldo@gmail.com

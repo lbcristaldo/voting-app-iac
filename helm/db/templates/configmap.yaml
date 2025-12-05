@@ -1,0 +1,15 @@
+{{- if .Values.postgresql.initdb.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "db.fullname" . }}-init
+  labels:
+    app: db
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    release: {{ .Release.Name }}
+data:
+  {{- range $key, $value := .Values.postgresql.initdb.scripts }}
+  {{ $key }}: |
+    {{- $value | nindent 4 }}
+  {{- end }}
+{{- end }}

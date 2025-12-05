@@ -1,0 +1,23 @@
+# Development environment overrides
+
+replicaCount: 1
+
+# Simple password for dev
+postgresql:
+  password: "postgres"
+  database: "postgres"
+  username: "postgres"
+
+# Use local storage
+persistence:
+  enabled: true
+  storageClass: "local-storage"
+  size: 500Mi
+
+resources:
+  limits:
+    cpu: 250m
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi

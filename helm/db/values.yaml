@@ -1,0 +1,64 @@
+# Default values for PostgreSQL
+# This is a YAML-formatted file.
+
+replicaCount: 1
+
+image:
+  repository: postgres
+  tag: "15-alpine"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 5432
+
+# PostgreSQL configuration
+postgresql:
+  # Database name
+  database: "postgres"
+  
+  # Username
+  username: "postgres"
+  
+  # Password (override in values-dev.yaml)
+  password: "postgres"
+  
+  # Initial database and user (created on first run)
+  initdb:
+    enabled: true
+    scripts:
+      init.sql: |
+        CREATE TABLE IF NOT EXISTS votes (
+          id VARCHAR(255) NOT NULL UNIQUE,
+          vote VARCHAR(255) NOT NULL
+        );
+
+# Persistence
+persistence:
+  enabled: true
+  storageClass: "local-storage"
+  accessMode: ReadWriteOnce
+  size: 1Gi
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+
+# Health checks
+livenessProbe:
+  enabled: true
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 6
+
+readinessProbe:
+  enabled: true
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 6
