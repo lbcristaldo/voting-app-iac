@@ -1,0 +1,47 @@
+replicaCount: 2
+
+image:
+  repository: dockersamples/examplevotingapp_vote
+  digest: "sha256:7102d3b952ec84e3541ee12e7217e320c52aed60b13501c3158f46376a907466"
+  tag: "before"
+  pullPolicy: IfNotPresent
+
+service:
+  type: NodePort
+  port: 80
+  targetPort: 80
+  nodePort: 31000
+
+# Redis connection
+redis:
+  host: "redis"
+  port: 6379
+
+# Vote options
+voteOptions:
+  optionA: "Cats"
+  optionB: "Dogs"
+
+resources:
+  limits:
+    cpu: 200m
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+livenessProbe:
+  enabled: true
+  httpGet:
+    path: /
+    port: 80
+  initialDelaySeconds: 15
+  periodSeconds: 10
+
+readinessProbe:
+  enabled: true
+  httpGet:
+    path: /
+    port: 80
+  initialDelaySeconds: 5
+  periodSeconds: 5
