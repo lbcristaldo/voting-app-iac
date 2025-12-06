@@ -2,7 +2,7 @@ replicaCount: 1
 
 image:
   repository: dockersamples/examplevotingapp_worker
-  tag: "latest"
+  tag: "before"
   digest: "sha256:c8a8571065479c12567e8e440836e543d185c678cd4781a32b100f71e8f39c86" 
   pullPolicy: IfNotPresent
 
