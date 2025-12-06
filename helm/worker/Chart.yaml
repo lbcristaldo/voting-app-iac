@@ -1,0 +1,14 @@
+apiVersion: v2
+name: worker
+description: .NET worker that processes votes from Redis to PostgreSQL
+type: application
+version: 1.0.0
+appVersion: "1.0"
+
+keywords:
+  - worker
+  - dotnet
+  - processor
+
+maintainers:
+  - name: Luciana Cristaldo

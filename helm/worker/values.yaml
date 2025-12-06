@@ -1,0 +1,31 @@
+replicaCount: 1
+
+image:
+  repository: dockersamples/examplevotingapp_worker
+  tag: "latest"
+  digest: "sha256:c8a8571065479c12567e8e440836e543d185c678cd4781a32b100f71e8f39c86" 
+  pullPolicy: IfNotPresent
+
+# Redis connection (source)
+redis:
+  host: "redis"
+  port: 6379
+
+# PostgreSQL connection (destination)
+postgres:
+  host: "db"
+  port: 5432
+  user: "postgres"
+  password: "postgres"
+  database: "postgres"
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+
+# No liveness/readiness probes - it's a background worker
+# Monitors based on pod restart count instead

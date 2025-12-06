@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "worker.fullname" . }}
+  labels:
+    app: worker
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    release: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: worker
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: worker
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+      - name: worker
+        {{- if .Values.image.digest }}
+        image: "{{ .Values.image.repository }}@{{ .Values.image.digest }}"
+        {{- else }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        {{- end }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        env:
+        # Redis configuration
+        - name: REDIS_HOST
+          value: {{ .Values.redis.host | quote }}
+        - name: REDIS_PORT
+          value: {{ .Values.redis.port | quote }}
+        # PostgreSQL configuration
+        - name: POSTGRES_HOST
+          value: {{ .Values.postgres.host | quote }}
+        - name: POSTGRES_PORT
+          value: {{ .Values.postgres.port | quote }}
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: db
+              key: POSTGRES_USER
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db
+              key: POSTGRES_PASSWORD
+        - name: POSTGRES_DB
+          valueFrom:
+            secretKeyRef:
+              name: db
+              key: POSTGRES_DB
+        resources:
+          {{- toYaml .Values.resources | nindent 10 }}
