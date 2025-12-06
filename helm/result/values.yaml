@@ -1,0 +1,45 @@
+replicaCount: 1
+
+image:
+  repository: dockersamples/examplevotingapp_result
+  tag: "before"
+  digest: "sha256:06c50992ab258e1d83406784040842bb920f6938eabac19261e7ec634f878935"
+  pullPolicy: IfNotPresent
+
+service:
+  type: NodePort
+  port: 80
+  targetPort: 80
+  nodePort: 31001
+
+# PostgreSQL connection (read-only)
+postgres:
+  host: "db"
+  port: 5432
+  user: "postgres"
+  password: "postgres"
+  database: "postgres"
+
+resources:
+  limits:
+    cpu: 200m
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+livenessProbe:
+  enabled: true
+  httpGet:
+    path: /
+    port: 80
+  initialDelaySeconds: 15
+  periodSeconds: 10
+
+readinessProbe:
+  enabled: true
+  httpGet:
+    path: /
+    port: 80
+  initialDelaySeconds: 5
+  periodSeconds: 5

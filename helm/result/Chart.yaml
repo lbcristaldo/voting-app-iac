@@ -1,0 +1,14 @@
+apiVersion: v2
+name: result
+description: Node.js real-time results dashboard
+type: application
+version: 1.0.0
+appVersion: "1.0"
+
+keywords:
+  - result
+  - dashboard
+  - nodejs
+
+maintainers:
+  - name: Luciana Cristaldo
