@@ -52,4 +52,4 @@ echo ""
 echo "Ready to run: terraform init && terraform apply"
 
 
-chmod +x validate-minikube.sh
+

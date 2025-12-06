@@ -3,6 +3,7 @@
 Production-ready infrastructure automation for the Docker Voting App using Terraform and Helm.
 
  Application Architecture
+
 The voting app consists of 5 microservices:
 
 - **Vote** (Python Flask): Frontend where users vote
@@ -82,3 +83,5 @@ Author: Luciana Cristaldo - 2025
 - GitOps with Helm
 - Kubernetes orchestration
 - Multi-service deployment automation
+
+
