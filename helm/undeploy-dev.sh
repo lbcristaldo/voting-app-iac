@@ -21,4 +21,4 @@ kubectl get pvc -n ${NAMESPACE}
 echo ""
 echo "To delete PVCs: kubectl delete pvc --all -n ${NAMESPACE}"
 
-chmod +x undeploy-dev.sh
+

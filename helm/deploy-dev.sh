@@ -59,4 +59,4 @@ echo "  Then open:"
 echo "  - http://localhost:5000 (vote)"
 echo "  - http://localhost:5001 (results)"
 
-chmod +x deploy-dev.sh
+
