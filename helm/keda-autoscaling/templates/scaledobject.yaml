@@ -1,0 +1,48 @@
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: {{ .Values.target.deployment }}-scaledobject
+  namespace: {{ .Values.target.namespace }}
+  labels:
+    app: {{ .Values.target.deployment }}
+    scaledBy: keda
+spec:
+  # Target deployment to scale
+  scaleTargetRef:
+    name: {{ .Values.target.deployment }}
+  
+  # Scaling boundaries
+  minReplicaCount: {{ .Values.scaling.minReplicaCount }}
+  maxReplicaCount: {{ .Values.scaling.maxReplicaCount }}
+  
+  # Cooldown configuration
+  cooldownPeriod: {{ .Values.scaling.cooldownPeriod }}
+  pollingInterval: {{ .Values.scaling.pollingInterval }}
+  
+  {{- if .Values.advanced.restoreToOriginalReplicaCount }}
+  # Restore replicas when ScaledObject is deleted
+  advanced:
+    restoreToOriginalReplicaCount: {{ .Values.advanced.restoreToOriginalReplicaCount }}
+    horizontalPodAutoscalerConfig:
+      behavior:
+        {{- toYaml .Values.advanced.behavior | nindent 8 }}
+  {{- end }}
+  
+  # Event source triggers
+  triggers:
+  - type: redis
+    metadata:
+      # Redis connection
+      address: {{ .Values.redis.host }}:{{ .Values.redis.port }}
+      
+      # List to monitor
+      listName: {{ .Values.redis.listName }}
+      
+      # Target list length per replica
+      listLength: {{ .Values.redis.listLength | quote }}
+      
+      # Database index
+      databaseIndex: {{ .Values.redis.databaseIndex | quote }}
+      
+      # Enable TLS (false for dev)
+      enableTLS: "false"

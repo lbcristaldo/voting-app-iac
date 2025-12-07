@@ -1,0 +1,62 @@
+# KEDA ScaledObject Configuration
+
+# Target deployment to scale
+target:
+  deployment: "worker"
+  namespace: "voting-app-dev"
+
+# Scaling configuration
+scaling:
+  # Minimum replicas (0 = scale to zero when no work) + Use 1 if instantaneous processing is needed
+  minReplicaCount: 0
+  
+  # Maximum replicas
+  maxReplicaCount: 10
+  
+  # Cooldown period after scaling down (seconds)
+  cooldownPeriod: 300  # 5 minutes
+  
+  # How often to check the trigger (seconds)
+  pollingInterval: 30
+
+# Redis scaler configuration
+redis:
+  # Redis service connection
+  host: "redis.voting-app-dev.svc.cluster.local"
+  port: 6379
+  
+  # List name to monitor
+  listName: "votes"
+  
+  # Target messages per replica
+  # If listLength = 20 and listLength = 5, KEDA creates 4 replicas
+  listLength: "5"
+  
+  # Database index (Redis has 16 databases by default, we use 0)
+  databaseIndex: "0"
+
+# Advanced configuration
+advanced:
+  # Restore original replica count when ScaledObject is deleted
+  restoreToOriginalReplicaCount: true
+  
+  # Behavior for scaling up/down
+  behavior:
+    scaleDown:
+      # Wait 60s before scaling down
+      stabilizationWindowSeconds: 60
+      policies:
+      - type: Percent
+        value: 50  # Scale down max 50% of current replicas at a time
+        periodSeconds: 15
+    scaleUp:
+      # Scale up immediately when needed
+      stabilizationWindowSeconds: 0
+      policies:
+      - type: Percent
+        value: 100  # Can double replicas immediately
+        periodSeconds: 15
+      - type: Pods
+        value: 4  # Can add max 4 pods at once
+        periodSeconds: 15
+      selectPolicy: Max  # Use the policy that adds more pods

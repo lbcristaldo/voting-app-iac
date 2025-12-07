@@ -1,0 +1,16 @@
+apiVersion: v2
+name: keda-autoscaling
+description: KEDA ScaledObject for Worker autoscaling based on Redis queue length
+type: application
+version: 1.0.0
+appVersion: "2.12"
+
+keywords:
+  - keda
+  - autoscaling
+  - event-driven
+
+maintainers:
+  - name: Luciana Cristaldo
+
+dependencies: []

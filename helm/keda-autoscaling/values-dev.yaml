@@ -1,0 +1,24 @@
+# Development overrides for KEDA
+
+scaling:
+  # Keep 1 minimum replica in dev for faster response
+  minReplicaCount: 1
+  
+  # Lower max for dev cluster
+  maxReplicaCount: 5
+  
+  # Faster cooldown for testing
+  cooldownPeriod: 60  # 1 minute
+
+redis:
+  # Messages per replica (lower = more aggressive scaling)
+  listLength: "3"
+
+advanced:
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 30  # Scale down faster in dev
+      policies:
+      - type: Pods
+        value: 1
+        periodSeconds: 15
