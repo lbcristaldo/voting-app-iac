@@ -1,5 +1,11 @@
 replicaCount: 1
 
+image:
+  repository: lbcristaldo/voting-app-vote
+  tag: fixed
+  digest: sha256:cb94e0666be2562ac72b0e4bcb162e182edf7472d3192931511bee6815c349cd
+  pullPolicy: Always
+
 service:
   type: ClusterIP
   port: 5000
