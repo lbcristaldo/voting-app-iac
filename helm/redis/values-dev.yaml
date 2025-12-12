@@ -14,3 +14,18 @@ resources:
 redis:
   persistence:
     enabled: false
+
+# Relax health checks for dev
+livenessProbe:
+  enabled: true
+  initialDelaySeconds: 60  # Esperar más antes de empezar a chequear
+  periodSeconds: 20        # Chequear menos frecuente
+  timeoutSeconds: 10       # Más tiempo para responder
+  failureThreshold: 5      # Más tolerancia a fallos
+
+readinessProbe:
+  enabled: true
+  initialDelaySeconds: 10
+  periodSeconds: 20
+  timeoutSeconds: 5
+  failureThreshold: 5
