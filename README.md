@@ -1,4 +1,4 @@
-# 𐙚 Voting App - Infrastructure as Code
+# Voting App - Infrastructure as Code
 
 [![Kubernetes](https://img.shields.io/badge/kubernetes-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white)](https://kubernetes.io/)
 [![Terraform](https://img.shields.io/badge/terraform-7B42BC?style=for-the-badge&logo=terraform&logoColor=white)](https://www.terraform.io/)
@@ -47,15 +47,86 @@ graph LR
 
 ## .ೃ࿔*:･°❀ Features
 
-- ✅ **Automated infrastructure** provisioning with Terraform
-- ✅ **Declarative deployments** with Helm charts
-- ✅ **Persistent storage** for stateful services (PostgreSQL)
-- ✅ **Health checks** and probes for reliability
-- ✅ **Immutable deployments** with SHA256 image digests
-- ✅ **Secret management** for credentials
-- ✅ **Multi-replica support** for high availability
-- ✅ **Resource limits** and requests defined
-- ✅ **Port-forward** ready for local testing
+- **Automated infrastructure** provisioning with Terraform
+- **Declarative deployments** with Helm charts
+- **Persistent storage** for stateful services (PostgreSQL)
+- **Health checks** and probes for reliability
+- **Immutable deployments** with SHA256 image digests
+- **Secret management** for credentials
+- **Multi-replica support** for high availability
+- **Resource limits** and requests defined
+- **Port-forward** ready for local testing
+- **Event-driven autoscaling** with KEDA
+- **Pod optimization** with Descheduler
+
+---
+
+## ✮⋆˙ Advanced Features
+
+### Event-Driven Autoscaling with KEDA
+
+Automatically scales the Worker service based on Redis queue length:
+
+- **Scale to zero** when no votes pending
+- **Scale up to 5 replicas** during high traffic
+- **Target:** 3 messages per Worker replica
+- **Cooldown:** 60 seconds in dev
+```mermaid
+graph LR
+    Redis[Redis Queue15 votes] -->|KEDA monitors| Trigger[ScaledObject]
+    Trigger -->|Calculates| Math[15 ÷ 3 = 5 replicas]
+    Math -->|Scales| Worker[Worker Pods1 → 5]
+    
+    style Redis fill:#dc382d,color:#fff
+    style Worker fill:#512bd4,color:#fff
+    style Trigger fill:#326CE5,color:#fff
+```
+
+**Configuration:**
+- Polling interval: 30 seconds
+- Redis scaler monitoring `votes` list
+- HPA created automatically by KEDA
+
+**Status:** Deployed and monitoring (see [KEDA chart](helm/keda-autoscaling/README.md))
+
+---
+
+### Pod Optimization with Descheduler
+
+Continuously optimizes pod placement across nodes for better resource utilization:
+
+**Enabled strategies:**
+- **RemoveDuplicates:** Distributes replicas across different nodes
+- **LowNodeUtilization:** Balances CPU/memory usage (20% min, 50% target)
+
+**How it works:**
+1. CronJob runs every 5 minutes
+2. Evaluates pod placement efficiency
+3. Evicts poorly placed pods
+4. Kubernetes scheduler reassigns them optimally
+```mermaid
+graph TB
+    Cron[Descheduler CronJob] -->|Every 5min| Check{Node balanced?}
+    Check -->|No| Evict[Evict pod from overloaded node]
+    Check -->|Yes| Skip[Skip]
+    Evict -->|Pod terminated| Sched[Scheduler replaces on better node]
+    
+    style Cron fill:#326CE5,color:#fff
+    style Evict fill:#f44336,color:#fff
+    style Sched fill:#4CAF50,color:#fff
+```
+
+**Current behavior:**
+- Inactive in Minikube (single-node cluster)
+- Ready for multi-node clusters (GKE/EKS)
+
+**Production benefits:**
+- Prevents cascading failures from node overload
+- Reduces costs by optimizing node utilization
+- Improves Worker processing speed (fewer throttled pods)
+- Complements KEDA: Better distribution → more efficient scaling
+
+**Documentation:** [Descheduler setup](docs/descheduler.md)
 
 ---
 
